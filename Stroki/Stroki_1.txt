@@ -1,0 +1,66 @@
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        String pat = args[0];
+        String txt = args[1];
+        System.out.println("   text: " + txt);
+        System.out.print("pattern: ");
+        System.out.println(pat);
+        System.out.println();
+        KMP(txt, pat);
+    }
+
+    public static void KMP(String X, String Y)
+    {
+        if (Y == null || Y.length() == 0)
+        {
+            System.out.println("Pattern occurs with shift 0");
+            return;
+        }
+
+        if (X == null || Y.length() > X.length())
+        {
+            System.out.println("Pattern not found");
+            return;
+        }
+
+        char[] chars = Y.toCharArray();
+
+        int[] next = new int[Y.length() + 1];
+        for (int i = 1; i < Y.length(); i++)
+        {
+            int j = next[i + 1];
+
+            while (j > 0 && chars[j] != chars[i])
+                j = next[j];
+
+            if (j > 0 || chars[j] == chars[i])
+                next[i + 1] = j + 1;
+        }
+
+        int count = count(X, Y, next);
+        System.out.println("Количество совпадений: " + count);
+    }
+
+    static int count(String X, String Y, int[] next) {
+        int count = 0;
+        for (int i = 0, j = 0; i < X.length(); i++)
+        {
+            if (j < Y.length() && X.charAt(i) == Y.charAt(j))
+            {
+                if (++j == Y.length())
+                {
+                    System.out.println("Вхождение встречается на позиции " + (i - j + 1));
+                    count++;
+                }
+            }
+            else if (j > 0)
+            {
+                j = next[j];
+                i--;
+            }
+        }
+        return count;
+    }
+
+}
